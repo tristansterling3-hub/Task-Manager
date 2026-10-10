@@ -3,6 +3,7 @@ import { TaskProvider } from './context/TaskContext';
 import TaskForm from './components/molecules/TaskForm';
 import TaskList from './components/organisms/TaskList';
 import FilterBar from './components/molecules/FilterBar';
+import NotificationManager from './components/organisms/NotificationManager';
 import { useTasks } from './context/TaskContext';
 import { COLORS } from './constants/colors';
 
@@ -128,6 +129,7 @@ function AppContent() {
 
   return (
     <div style={STYLES.container}>
+      <NotificationManager />
       <header style={STYLES.header}>
         <div style={STYLES.headerContent}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>

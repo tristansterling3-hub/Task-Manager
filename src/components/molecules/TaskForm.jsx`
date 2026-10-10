@@ -3,23 +3,32 @@ import { useTasks } from '../../context/TaskContext';
 import { PRIORITIES, LABELS } from '../../constants';
 import { COLORS } from '../../constants/colors';
 
-const TaskForm = ({ editingTask }) => {
-  const { addTask, updateTask } = useTasks();
-  const [title, setTitle] = useState(editingTask?.title || '');
-  const [description, setDescription] = useState(editingTask?.description || '');
-  const [priority, setPriority] = useState(editingTask?.priority || PRIORITIES.MEDIUM);
-  const [label, setLabel] = useState(editingTask?.label || LABELS.PERSONAL);
-  const [dueDate, setDueDate] = useState(editingTask?.dueDate || '');
+const TaskForm = () => {
+  const { addTask } = useTasks();
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [priority, setPriority] = useState(PRIORITIES.MEDIUM);
+  const [label, setLabel] = useState(LABELS.PERSONAL);
+  const [dueDate, setDueDate] = useState('');
+  const [reminderStart, setReminderStart] = useState(18000000); // Default 5 hours in ms
+  const [reminderInterval, setReminderInterval] = useState(3600000); // Default 1 hour in ms
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title.trim()) return;
 
-    if (editingTask) {
-      updateTask(editingTask.id, { title, description, priority, label, dueDate });
-    } else {
-      addTask({ title, description, priority, label, dueDate, isCompleted: false });
-    }
+    addTask({
+      title,
+      description,
+      priority,
+      label,
+      dueDate,
+      isCompleted: false,
+      notificationSettings: {
+        reminderStart: Number(reminderStart),
+        reminderInterval: Number(reminderInterval),
+      }
+    });
 
     setTitle('');
     setDescription('');
@@ -49,25 +58,25 @@ const TaskForm = ({ editingTask }) => {
         padding: '1.5rem',
         borderRadius: '0px',
         border: `1px solid ${COLORS.border}`,
-        boxShadow: 'none',
+        boxShadow: `0 10px 15px -3px ${COLORS.overlay}`,
       }}
     >
       <div style={{ fontSize: '0.7rem', fontWeight: 'bold', color: COLORS.primary, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem' }}>
-        {editingTask ? 'Modify_Directive' : 'Initialize New Directive'}
+        New Directive
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="DIRECTIVE_TITLE"
+          placeholder="Task Name"
           required
           style={{ ...inputStyle, width: '100%', boxSizing: 'border-box' }}
         />
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="SOP / DESCRIPTION"
+          placeholder="Notes or Details"
           style={{
             ...inputStyle,
             width: '100%',
@@ -90,6 +99,33 @@ const TaskForm = ({ editingTask }) => {
           onChange={(e) => setDueDate(e.target.value)}
           style={inputStyle}
         />
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '10px', border: `1px solid ${COLORS.border}`, backgroundColor: COLORS.bg }}>
+          <span style={{ fontSize: '0.6rem', fontWeight: 'bold', color: COLORS.textMuted, textTransform: 'uppercase' }}>Reminders</span>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <select
+              value={reminderStart}
+              onChange={(e) => setReminderStart(e.target.value)}
+              style={inputStyle}
+            >
+              <option value={60000 * 60 * 1}>Start 1h Before</option>
+              <option value={60000 * 60 * 5}>Start 5h Before</option>
+              <option value={60000 * 60 * 24}>Start 1d Before</option>
+              <option value={60000 * 60 * 24 * 7}>Start 1w Before</option>
+              <option value={60000 * 60 * 24 * 30}>Start 1mo Before</option>
+            </select>
+            <select
+              value={reminderInterval}
+              onChange={(e) => setReminderInterval(e.target.value)}
+              style={inputStyle}
+            >
+              <option value={60000}>Every Minute</option>
+              <option value={60000 * 60}>Every Hour</option>
+              <option value={60000 * 60 * 24}>Every Day</option>
+            </select>
+          </div>
+        </div>
+
         <button
           type="submit"
           style={{
@@ -104,15 +140,18 @@ const TaskForm = ({ editingTask }) => {
             letterSpacing: '1px',
             fontSize: '0.8rem',
             transition: 'all 0.2s ease',
+            boxShadow: `0 0 10px ${COLORS.primary}44`
           }}
           onMouseOver={(e) => {
             e.target.style.backgroundColor = COLORS.primaryHover;
+            e.target.style.boxShadow = `0 0 20px ${COLORS.primary}66`;
           }}
           onMouseOut={(e) => {
             e.target.style.backgroundColor = COLORS.primary;
+            e.target.style.boxShadow = `0 0 10px ${COLORS.primary}44`;
           }}
         >
-          {editingTask ? 'Confirm_Modification' : 'Execute_Command'}
+          Add Task
         </button>
       </div>
     </form>

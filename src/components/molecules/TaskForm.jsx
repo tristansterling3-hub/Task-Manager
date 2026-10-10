@@ -11,6 +11,14 @@ const TaskForm = () => {
   const [label, setLabel] = useState(LABELS.PERSONAL);
   const [dueDate, setDueDate] = useState('');
 
+  // Reminder state: { days, hours, minutes }
+  const [startOffset, setStartOffset] = useState({ days: 0, hours: 5, minutes: 0 });
+  const [intervalOffset, setIntervalOffset] = useState({ days: 0, hours: 1, minutes: 0 });
+
+  const convertToMs = (offset) => {
+    return (offset.days * 86400000) + (offset.hours * 3600000) + (offset.minutes * 60000);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title.trim()) return;
@@ -22,6 +30,10 @@ const TaskForm = () => {
       label,
       dueDate,
       isCompleted: false,
+      notificationSettings: {
+        reminderStart: convertToMs(startOffset),
+        reminderInterval: convertToMs(intervalOffset),
+      }
     });
 
     setTitle('');
@@ -39,6 +51,13 @@ const TaskForm = () => {
     fontFamily: 'inherit',
     outline: 'none',
     transition: 'border-color 0.2s ease',
+  };
+
+  const timeInputStyle = {
+    ...inputStyle,
+    width: '60px',
+    textAlign: 'center',
+    padding: '0.6rem 0.4rem'
   };
 
   return (
@@ -93,6 +112,63 @@ const TaskForm = () => {
           onChange={(e) => setDueDate(e.target.value)}
           style={inputStyle}
         />
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '10px', border: `1px solid ${COLORS.border}`, backgroundColor: COLORS.bg }}>
+          <span style={{ fontSize: '0.6rem', fontWeight: 'bold', color: COLORS.textMuted, textTransform: 'uppercase' }}>Reminders</span>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '0.6rem', color: COLORS.textMuted, width: '80px' }}>START BEFORE:</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <input
+                  type="number"
+                  value={startOffset.days}
+                  onChange={(e) => setStartOffset({...startOffset, days: parseInt(e.target.value) || 0})}
+                  style={timeInputStyle}
+                  min="0"
+                /> <span style={{ fontSize: '0.6rem', color: COLORS.textMuted }}>d</span>
+                <input
+                  type="number"
+                  value={startOffset.hours}
+                  onChange={(e) => setStartOffset({...startOffset, hours: parseInt(e.target.value) || 0})}
+                  style={timeInputStyle}
+                /> <span style={{ fontSize: '0.6rem', color: COLORS.textMuted }}>h</span>
+                <input
+                  type="number"
+                  value={startOffset.minutes}
+                  onChange={(e) => setStartOffset({...startOffset, minutes: parseInt(e.target.value) || 0})}
+                  style={timeInputStyle}
+                /> <span style={{ fontSize: '0.6rem', color: COLORS.textMuted }}>m</span>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '0.6rem', color: COLORS.textMuted, width: '80px' }}>INTERVAL:</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <input
+                  type="number"
+                  value={intervalOffset.days}
+                  onChange={(e) => setIntervalOffset({...intervalOffset, days: parseInt(e.target.value) || 0})}
+                  style={timeInputStyle}
+                  min="0"
+                /> <span style={{ fontSize: '0.6rem', color: COLORS.textMuted }}>d</span>
+                <input
+                  type="number"
+                  value={intervalOffset.hours}
+                  onChange={(e) => setIntervalOffset({...intervalOffset, hours: parseInt(e.target.value) || 0})}
+                  style={timeInputStyle}
+                /> <span style={{ fontSize: '0.6rem', color: COLORS.textMuted }}>h</span>
+                <input
+                  type="number"
+                  value={intervalOffset.minutes}
+                  onChange={(e) => setIntervalOffset({...intervalOffset, minutes: parseInt(e.target.value) || 0})}
+                  style={timeInputStyle}
+                /> <span style={{ fontSize: '0.6rem', color: COLORS.textMuted }}>m</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <button
           type="submit"
           style={{
