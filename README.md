@@ -35,13 +35,6 @@ A clean record of all successfully completed tasks.
 A focused, distraction-free environment for adding new tasks to the system.
 ![Create View](./Images/Create.png)
 
-## 🎨 Aesthetic & Design
-
-The application follows a "System Operational" design language:
-- **Architectural Edges**: Zero border-radius for a sharp, structured look.
-- **Monochromatic Base**: High-contrast palette with strategic use of priority-based colors.
-- **Typographic Focus**: Heavy use of uppercase labels and monospace fonts for a technical, "command-center" feel.
-
 ## 🛠️ Tech Stack
 
 - **Frontend**: React 19
